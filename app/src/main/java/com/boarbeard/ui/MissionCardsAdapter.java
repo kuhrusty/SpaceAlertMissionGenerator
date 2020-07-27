@@ -40,8 +40,7 @@ public class MissionCardsAdapter extends RecyclerView.Adapter<MissionCardsAdapte
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.mission_card_view, parent, false);
 
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)

@@ -45,22 +45,19 @@ public class MissionActivity extends Activity {
 
     private MediaPlayerSequence sequence;
 
-    private TextView missionTypeTextView;
-
     private ToggleButton togglebutton;
 
     private StopWatch stopWatch;
 
     private MissionType missionType = MissionType.Random;
 
-    private List<MissionLog> missionLogs = new ArrayList<MissionLog>();
+    private List<MissionLog> missionLogs = new ArrayList<>();
 
     // Enable to dump the entire mission to the mission log immediately after the mission is
     // selected. Usable for debugging.
     private static final boolean DUMP_MISSION_TREE = false;
 
     private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
     private MissionCardsAdapter mAdapter;
     private MenuItem menuTypeMission;
 
@@ -75,7 +72,7 @@ public class MissionActivity extends Activity {
         stopWatch = new StopWatch(
                 (TextView) findViewById(R.id.missionClockTextView));
 
-        missionTypeTextView = (TextView) findViewById(R.id.missionTypeTextView);
+        TextView missionTypeTextView = (TextView) findViewById(R.id.missionTypeTextView);
         if (missionTypeTextView != null) {
             // is null if we use action bar
             missionTypeTextView.setText(missionType
@@ -90,7 +87,7 @@ public class MissionActivity extends Activity {
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
@@ -120,6 +117,15 @@ public class MissionActivity extends Activity {
         }
     }
 
+    private static class EventListParserFactoryAsyncTask
+            extends AsyncTask<Context, Void, Void> {
+        @Override
+        protected Void doInBackground(Context... params) {
+            EventListParserFactory.getInstance().getParser(params[0]);
+            return null;
+        }
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -130,14 +136,7 @@ public class MissionActivity extends Activity {
         super.onResume();
 
         // Prepare parser
-        new AsyncTask<Context, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Context... params) {
-                EventListParserFactory.getInstance().getParser(params[0]);
-                return null;
-            }
-        }.execute(this);
+        new EventListParserFactoryAsyncTask().execute(this);
 
         setSystemUiVisibility(systemUiMode);
     }
@@ -252,10 +251,8 @@ public class MissionActivity extends Activity {
         if (start) {
             if (sequence == null) {
                 configureMission(true);
-                startMission();
-            } else {
-                startMission();
             }
+            startMission();
         } else {
             pauseMission();
         }
@@ -343,7 +340,7 @@ public class MissionActivity extends Activity {
     }
 
     private void notificationUpdate(boolean isRunning) {
-        int notificationId = 001;
+        int notificationId = 1;
 
         // Intent to bring you back to app
         Intent viewIntent = new Intent(this, MissionActivity.class);
@@ -363,7 +360,7 @@ public class MissionActivity extends Activity {
         // Intent to stop/start the mission
         Intent mediaIntent = new Intent(this, MissionActivity.class);
         mediaIntent.setAction(MEDIA_ACTION);
-        mediaIntent.putExtra(Intent.EXTRA_SUBJECT, new Boolean(!isRunning));
+        mediaIntent.putExtra(Intent.EXTRA_SUBJECT, Boolean.valueOf(!isRunning));
         PendingIntent startStopIntent =
                 PendingIntent.getActivity(this, 0, mediaIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 

@@ -28,7 +28,7 @@ public abstract class Grammar {
 	 * @author Chris
 	 * 
 	 */
-	public static enum Element {
+	public enum Element {
 
 		Grammar(null), //
 
@@ -96,7 +96,7 @@ public abstract class Grammar {
 
 		private final String fileName;
 
-		private Element(String fileName) {
+		Element(String fileName) {
 
 			this.fileName = fileName;
 		}
@@ -115,7 +115,7 @@ public abstract class Grammar {
 	 */
 	public Grammar() {
 		super();
-		elemTable = new EnumMap<Element, MediaInfo>(Element.class);
+		elemTable = new EnumMap<>(Element.class);
 		elements = Collections.unmodifiableSet(elemTable.keySet());
 	}
 
@@ -216,8 +216,7 @@ public abstract class Grammar {
 
 		parser.require(XmlPullParser.START_TAG, null, GRAMMAR_XML_ROOT_TAG);
 
-		Map<Element, String> result = new EnumMap<Element, String>(
-				Element.class);
+		Map<Element, String> result = new EnumMap<>(Element.class);
 		while (parser.next() != XmlPullParser.END_TAG) {
 
 			if (parser.getEventType() != XmlPullParser.START_TAG) {
