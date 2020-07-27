@@ -1,1 +1,5 @@
-include ':app', ':wear'
+//  The wearable stuff isn't building for me, and I don't know enough about it
+//  to get it working, and I don't have any wearable devices, so comment it out
+//  for  now.
+//include ':app', ':wear'
+include ':app'
