@@ -10,6 +10,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            //  Fiddle with the app ID so that we can have both the debug and
+            //  the current Play store version installed at once.
+            applicationIdSuffix '.debug'
+            //  Note that the debug app name may be coming from
+            //  app/src/debug/res/values/strings.xml instead of
+            //  app/src/main/res/values/strings.xml.
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'

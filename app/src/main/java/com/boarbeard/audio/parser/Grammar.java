@@ -200,8 +200,8 @@ public abstract class Grammar {
 	 */
 	protected void addElement(Element elem, String description, int mediaResId,
 			Context context) {
-		addElement(elem, description, MediaInfo.convertResIdToUri(mediaResId),
-				context);
+		addElement(elem, description,
+		        MediaInfo.convertResIdToUri(context, mediaResId), context);
 	}
 
 	public abstract String getName();

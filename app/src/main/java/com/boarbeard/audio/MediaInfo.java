@@ -1,10 +1,9 @@
 package com.boarbeard.audio;
 
+import android.content.Context;
 import android.net.Uri;
 
 public class MediaInfo {
-
-	public static final String BASE_RESOURCE = "android.resource://com.boarbeard/";
 
 	private Uri resUri;
 	private int duration;
@@ -14,12 +13,12 @@ public class MediaInfo {
 	private String timeColor; // Color of the time when printed in log
 	private String textColor; // Color of the text when printed in log
 
-	public MediaInfo(int resId, int duration) {
-		this(convertResIdToUri(resId), duration);
+	public MediaInfo(Context context, int resId, int duration) {
+		this(convertResIdToUri(context, resId), duration);
 	}
 
-	public static Uri convertResIdToUri(int resId) {
-		return Uri.parse(BASE_RESOURCE + resId);
+	public static Uri convertResIdToUri(Context context, int resId) {
+		return Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
 	}
 
 	public MediaInfo(Uri resUri, int duration) {
