@@ -18,6 +18,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -98,6 +100,23 @@ public class MissionActivity extends Activity {
             }
         });
         setupActionBar();
+
+        //  This is a pretty bad kludge.  When the app first starts up, Random
+        //  is selected, but configureMission() hasn't been called, so we don't
+        //  see the mission introduction messages printed by configureMission().
+        //  I tried putting configureMission(true) here instead, but it caused a
+        //  weird delay at startup (maybe just because I was running it through
+        //  Android Studio?), and I wasn't sure it was the right thing to do
+        //  anyway.  So, instead, duplicate stuff from configureMission().
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("stompUnconfirmedReportsPreference", true)) {
+            printMissionIntroduction(getResources().getString(
+                    R.string.player_count_message, prefs.getInt("playerCount", 5)));
+        }
+        if (prefs.getBoolean("compressTimePreference", true)) {
+            printMissionIntroduction(getResources().getString(
+                    R.string.time_compressed_message));
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -214,6 +233,18 @@ public class MissionActivity extends Activity {
         missionLogs.clear();
         mAdapter.notifyDataSetChanged();
 
+        //  If we're stomping unconfirmed reports, display the player count to
+        //  help keep them from discarding unconfirmed reports for five
+        //  players, or getting unconfirmed reports as normal threats for four
+        //  players.
+        if (preferences.getBoolean("stompUnconfirmedReportsPreference", true)) {
+            printMissionIntroduction(getResources().getString(
+                    R.string.player_count_message, preferences.getInt("playerCount", 5)));
+        }
+        if (preferences.getBoolean("compressTimePreference", false)) {
+            printMissionIntroduction(getResources().getString(
+                    R.string.time_compressed_message));
+        }
         if (missionType.getMissionIntroductionResId() != 0) {
             ((MediaPlayerMainMission) sequence).
                     printMissionIntroduction(getResources().
@@ -226,6 +257,17 @@ public class MissionActivity extends Activity {
 
     }
 
+    private void printMissionIntroduction(String message) {
+        if (sequence != null) {
+            ((MediaPlayerMainMission) sequence).printMissionIntroduction(message);
+        } else {
+            //  sequence == null during onCreate(), before configureMission()
+            //  is called.  This is kind of nasty; duplicate code from
+            //  MediaPlayerMainMission.printMissionIntroduction().
+            missionLogs.add(new MissionLog(Html.fromHtml("<b><i> " + message +
+                    "</i></b>")));
+        }
+    }
 
     private void showMissionTypeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
